@@ -26,9 +26,10 @@
         body {
             margin: 0;
             height: 100vh;
-            /* Professional Dark Grey Blue (Deepened for contrast) */
-            background-color: #1a1e24;
-            color: #d8dee9;
+            /* Deep Neutral Dark (Less Blue tint) */
+            background-color: #121417;
+            color: #ecf0f1;
+            /* Crisp White/Grey */
             font-family: 'Outfit', sans-serif;
             display: grid;
             grid-template-columns: 70% 30%;
@@ -42,7 +43,7 @@
         /* --- ZONE 1: TERMINAL (Left) --- */
         #terminal-container {
             grid-area: terminal;
-            background-color: #1a1e24;
+            background-color: #121417;
             /* Seamless match */
             padding: 30px;
             position: relative;
@@ -63,10 +64,9 @@
             align-items: center;
             position: relative;
             min-height: 300px;
-            /* Subtle tech grid background? (Optional, kept clean for now) */
         }
 
-        /* ORB STYLES - ELECTRIC CYBERPUNK */
+        /* ORB STYLES - ELECTRIC CYBERPUNK (Kept Blue as the center piece) */
         .orb-container {
             width: 200px;
             height: 200px;
@@ -80,11 +80,10 @@
             width: 110px;
             height: 110px;
             border-radius: 50%;
-            /* Electric Blue Gradient - High Energy */
+            /* Electric Blue Gradient */
             background: linear-gradient(145deg, #00f2ff 0%, #0066ff 100%);
-            /* Sharp, Defined Glow (Cyberpunk style) */
             box-shadow:
-                0 0 20px rgba(0, 242, 255, 0.6),
+                0 0 30px rgba(0, 242, 255, 0.5),
                 inset 0 0 20px rgba(255, 255, 255, 0.4);
             position: relative;
             z-index: 10;
@@ -92,52 +91,52 @@
             animation: breathe 4s ease-in-out infinite;
         }
 
-        /* Minimalist Tech Ring */
+        /* Gold Accent Ring */
         .ring {
             position: absolute;
             border-radius: 50%;
-            border: 1px solid rgba(0, 242, 255, 0.3);
-            /* Thin electric line */
+            border: 1px solid rgba(255, 184, 108, 0.3);
+            /* Subtle Orange/Gold */
             width: 160px;
             height: 160px;
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.1);
-            animation: spin 10s linear infinite;
+            box-shadow: 0 0 10px rgba(255, 184, 108, 0.1);
+            animation: spin 15s linear infinite;
         }
 
         /* STATES */
         body.listening .orb {
             transform: scale(1.2);
-            background: linear-gradient(145deg, #00ffff 0%, #00aaff 100%);
-            box-shadow: 0 0 50px rgba(0, 242, 255, 0.8);
-            border: 2px solid #fff;
+            /* Bright Cyan/White state */
+            background: linear-gradient(145deg, #e0ffff 0%, #00ffff 100%);
+            box-shadow: 0 0 60px rgba(0, 255, 255, 0.7);
         }
 
         body.speaking .orb {
-            /* Cyber Green */
-            background: linear-gradient(145deg, #00ff9d 0%, #00cc66 100%);
-            box-shadow: 0 0 40px rgba(0, 255, 157, 0.6);
+            /* Neon Purple State (Complementary) */
+            background: linear-gradient(145deg, #d9a7c7 0%, #fffcdc 100%);
+            background: linear-gradient(145deg, #bd93f9 0%, #ff79c6 100%);
+            box-shadow: 0 0 40px rgba(189, 147, 249, 0.6);
             animation: pulse-sharp 0.5s infinite alternate;
         }
 
         body.thinking .orb {
-            /* Cyber Purple */
-            background: linear-gradient(145deg, #d500f9 0%, #651fff 100%);
-            box-shadow: 0 0 40px rgba(213, 0, 249, 0.6);
+            /* Warm Orange State (Thinking) */
+            background: linear-gradient(145deg, #ffb86c 0%, #ff5555 100%);
+            box-shadow: 0 0 40px rgba(255, 184, 108, 0.6);
             animation: spin 2s linear infinite;
         }
 
         #avatar-status {
             margin-top: 35px;
             font-family: 'JetBrains Mono', monospace;
-            /* Tech font */
             font-weight: 700;
             font-size: 0.85rem;
             letter-spacing: 3px;
-            color: #00f2ff;
-            /* Electric Text */
+            color: #ffb86c;
+            /* Orange/Gold Text */
             text-transform: uppercase;
             text-align: center;
-            text-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
+            text-shadow: 0 0 10px rgba(255, 184, 108, 0.4);
         }
 
         /* --- ZONE 3: STATUS (Right Bottom) --- */
@@ -151,7 +150,6 @@
             font-size: 0.85rem;
             justify-content: flex-end;
             padding-bottom: 80px;
-            /* Raised significantly */
         }
 
         .metric-row {
@@ -164,13 +162,14 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #a0aab5;
+            color: #dcdfe4;
+            /* Neutral Grey */
         }
 
         .metric i {
-            color: #00f2ff;
-            /* Electric Blue Icons */
-            text-shadow: 0 0 5px rgba(0, 242, 255, 0.5);
+            color: #ffb86c;
+            /* Orange Icons for Contrast */
+            text-shadow: 0 0 5px rgba(255, 184, 108, 0.5);
         }
 
         /* ANIMATIONS */
@@ -191,12 +190,12 @@
         @keyframes pulse-sharp {
             0% {
                 transform: scale(1);
-                box-shadow: 0 0 30px rgba(0, 255, 157, 0.4);
+                box-shadow: 0 0 30px rgba(189, 147, 249, 0.4);
             }
 
             100% {
                 transform: scale(1.1);
-                box-shadow: 0 0 60px rgba(0, 255, 157, 0.8);
+                box-shadow: 0 0 60px rgba(189, 147, 249, 0.8);
             }
         }
 
@@ -251,23 +250,24 @@
         // --- XTERM SETUP ---
         const term = new Terminal({
             theme: {
-                background: '#1a1e24', // Matching Body
-                foreground: '#cbe1f2', // EXTRA BRIGHT WHITE/BLUE (High readability)
-                cursor: '#00f2ff', // Electric Cursor
-                selection: 'rgba(0, 242, 255, 0.2)',
-                black: '#1a1e24',
-                red: '#ff6b6b',
-                green: '#5aff89',
-                yellow: '#f4ff91',
-                blue: '#caa3ff',
-                magenta: '#ff8fd2',
-                cyan: '#9dfaff',
-                white: '#ffffff',
-                brightGreen: '#00f2ff' // Custom highlighting
+                background: '#121417', // Matching Body
+                foreground: '#f8f8f2', // Neutral White
+                cursor: '#ffb86c', // Gold Cursor
+                selection: 'rgba(255, 184, 108, 0.2)',
+                black: '#21222c',
+                red: '#ff5555',
+                green: '#50fa7b',
+                yellow: '#f1fa8c',
+                blue: '#bd93f9',
+                magenta: '#ff79c6',
+                cyan: '#8be9fd',
+                white: '#f8f8f2',
+                brightGreen: '#50fa7b',
+                brightBlue: '#ffb86c' // Reuse for custom highlighting
             },
             fontFamily: '"JetBrains Mono", monospace',
             fontSize: 13,
-            lineHeight: 1.3, /* Better readability */
+            lineHeight: 1.3,
             cursorBlink: false,
             disableStdin: true,
             convertEol: true
@@ -282,25 +282,26 @@
 
         window.addEventListener('resize', () => fitAddon.fit());
 
-        // Custom Welcome Message (Cyberpunk)
-        term.writeln('\x1b[36m┌────────────────────────────────────────┐\x1b[0m');
-        term.writeln('\x1b[36m│ NEO CORE SYSTEM v2.5.0                 │\x1b[0m');
-        term.writeln('\x1b[36m│ STATUS: \x1b[1;32mONLINE\x1b[0;36m                         │\x1b[0m'); // Bright Green Online
-        term.writeln('\x1b[36m└────────────────────────────────────────┘\x1b[0m');
+        // Custom Welcome Message (Color Balanced)
+        term.writeln('\x1b[38;5;250m┌────────────────────────────────────────┐\x1b[0m');
+        term.writeln('\x1b[38;5;250m│ NEO CORE SYSTEM v2.5.0                 │\x1b[0m');
+        // Status: Bright Green | Box: Grey
+        term.writeln('\x1b[38;5;250m│ STATUS: \x1b[1;32mONLINE\x1b[0;38;5;250m                         │\x1b[0m');
+        term.writeln('\x1b[38;5;250m└────────────────────────────────────────┘\x1b[0m');
         term.writeln('');
 
         // --- SOCKET EVENTS ---
         socket.on('connect', () => {
-            // CHANGED: [SYS] is now Neon Green (\x1b[1;32m) for visibility
-            term.writeln('\x1b[1;32m[SYS]\x1b[0m \x1b[90mUplink established.\x1b[0m');
+            // [SYS] Orange/Gold
+            term.writeln('\x1b[38;5;214m[SYS]\x1b[0m \x1b[90mUplink established.\x1b[0m');
             statusText.innerText = "SYSTEM READY";
-            statusText.style.color = "#00f2ff";
+            statusText.style.color = "#ffb86c"; // Orange
             body.className = "idle";
         });
 
         socket.on('disconnect', () => {
-            // CHANGED: [SYS] is now Bright Red (\x1b[1;31m)
-            term.writeln('\x1b[1;31m[SYS]\x1b[0m \x1b[90mUplink lost.\x1b[0m');
+            // [SYS] Red
+            term.writeln('\x1b[31m[SYS]\x1b[0m \x1b[90mUplink lost.\x1b[0m');
             statusText.innerText = "OFFLINE";
             statusText.style.color = "#ff5555";
         });
@@ -308,8 +309,8 @@
         // 1. LOGS in Terminal
         socket.on('log_message', (data) => {
             let msg = data.msg;
-            // Tech Formatting
-            if (msg.includes('INFO')) msg = `\x1b[36m>>>\x1b[0m ${msg.replace('INFO', '').trim()}`;
+            // Diverse Colors
+            if (msg.includes('INFO')) msg = `\x1b[32m>>>\x1b[0m ${msg.replace('INFO', '').trim()}`;
             else if (msg.includes('WARNING')) msg = `\x1b[33m[WARN]\x1b[0m ${msg.replace('WARNING', '').trim()}`;
             else if (msg.includes('ERROR')) msg = `\x1b[31m[ERR]\x1b[0m ${msg.replace('ERROR', '').trim()}`;
 
@@ -326,18 +327,18 @@
 
         // 3. STT / TTS (Transcript)
         socket.on('stt:final', (text) => {
-            // [USER] Bright Magenta
+            // [USER] Bright Purple
             term.writeln(`\r\n\x1b[1;35m[USER]\x1b[0m ${text}`);
         });
 
         socket.on('tts:start', (text) => {
-            // [NEO] Cyan
-            term.writeln(`\x1b[36m[NEO]\x1b[0m ${text}`);
+            // [NEO] Bright Cyan
+            term.writeln(`\x1b[1;36m[NEO]\x1b[0m ${text}`);
             body.className = "speaking";
         });
 
         socket.on('ai:response', (data) => {
-            // Redundant with tts:start usually, but good fallback
+
         });
 
         // --- CLOCK & METRICS ---
@@ -345,7 +346,6 @@
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-            // Fake metrics to start, real ones need socket event
             document.getElementById('cpu-load').innerText = `CPU: ${(Math.random() * 30 + 10).toFixed(0)}%`;
             document.getElementById('ram-load').innerText = `RAM: ${(Math.random() * 10 + 40).toFixed(0)}%`;
         }, 2000);
