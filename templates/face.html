@@ -26,10 +26,9 @@
         body {
             margin: 0;
             height: 100vh;
-            background-color: #2e3440;
-            /* Nord Polar Night (Dark Pastel Grey/Blue) */
+            /* Professional Dark Grey Blue (Deepened for contrast) */
+            background-color: #1a1e24;
             color: #d8dee9;
-            /* Nord Snow Storm (Soft White) */
             font-family: 'Outfit', sans-serif;
             display: grid;
             grid-template-columns: 70% 30%;
@@ -43,9 +42,9 @@
         /* --- ZONE 1: TERMINAL (Left) --- */
         #terminal-container {
             grid-area: terminal;
-            background-color: #2e3440;
+            background-color: #1a1e24;
             /* Seamless match */
-            padding: 25px;
+            padding: 30px;
             position: relative;
             overflow: hidden;
             height: 100vh;
@@ -64,9 +63,10 @@
             align-items: center;
             position: relative;
             min-height: 300px;
+            /* Subtle tech grid background? (Optional, kept clean for now) */
         }
 
-        /* ORB STYLES - DARK BLUE PASTEL EDITION */
+        /* ORB STYLES - ELECTRIC CYBERPUNK */
         .orb-container {
             width: 200px;
             height: 200px;
@@ -77,50 +77,67 @@
         }
 
         .orb {
-            width: 100px;
-            height: 100px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
-            /* Nord Frost Gradient */
-            background: linear-gradient(135deg, #8fbcbb 0%, #88c0d0 100%);
-            box-shadow: 0 0 30px rgba(136, 192, 208, 0.3);
+            /* Electric Blue Gradient - High Energy */
+            background: linear-gradient(145deg, #00f2ff 0%, #0066ff 100%);
+            /* Sharp, Defined Glow (Cyberpunk style) */
+            box-shadow:
+                0 0 20px rgba(0, 242, 255, 0.6),
+                inset 0 0 20px rgba(255, 255, 255, 0.4);
             position: relative;
             z-index: 10;
-            transition: all 0.5s ease;
-            animation: breathe 5s ease-in-out infinite;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: breathe 4s ease-in-out infinite;
+        }
+
+        /* Minimalist Tech Ring */
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            /* Thin electric line */
+            width: 160px;
+            height: 160px;
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.1);
+            animation: spin 10s linear infinite;
         }
 
         /* STATES */
         body.listening .orb {
             transform: scale(1.2);
-            /* Frost Blue Glow */
-            box-shadow: 0 0 60px rgba(136, 192, 208, 0.5);
-            background: linear-gradient(135deg, #88c0d0 0%, #81a1c1 100%);
+            background: linear-gradient(145deg, #00ffff 0%, #00aaff 100%);
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.8);
+            border: 2px solid #fff;
         }
 
         body.speaking .orb {
-            /* Aurora Green (Pastel) */
-            background: linear-gradient(135deg, #a3be8c 0%, #8fbcbb 100%);
-            box-shadow: 0 0 40px rgba(163, 190, 140, 0.4);
-            animation: pulse-soft 2s infinite;
+            /* Cyber Green */
+            background: linear-gradient(145deg, #00ff9d 0%, #00cc66 100%);
+            box-shadow: 0 0 40px rgba(0, 255, 157, 0.6);
+            animation: pulse-sharp 0.5s infinite alternate;
         }
 
         body.thinking .orb {
-            /* Aurora Purple (Pastel) */
-            background: linear-gradient(135deg, #b48ead 0%, #81a1c1 100%);
-            box-shadow: 0 0 40px rgba(180, 142, 173, 0.4);
-            animation: spin 3s linear infinite;
+            /* Cyber Purple */
+            background: linear-gradient(145deg, #d500f9 0%, #651fff 100%);
+            box-shadow: 0 0 40px rgba(213, 0, 249, 0.6);
+            animation: spin 2s linear infinite;
         }
 
         #avatar-status {
-            margin-top: 30px;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 500;
-            font-size: 0.9rem;
-            letter-spacing: 1.5px;
-            color: #81a1c1;
-            /* Nord Blue (Muted) */
+            margin-top: 35px;
+            font-family: 'JetBrains Mono', monospace;
+            /* Tech font */
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            color: #00f2ff;
+            /* Electric Text */
             text-transform: uppercase;
             text-align: center;
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
         }
 
         /* --- ZONE 3: STATUS (Right Bottom) --- */
@@ -131,7 +148,7 @@
             padding: 30px;
             gap: 15px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             justify-content: flex-end;
             padding-bottom: 50px;
         }
@@ -145,15 +162,14 @@
         .metric {
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: #d8dee9;
-            /* Off-white */
-            opacity: 0.6;
+            gap: 10px;
+            color: #a0aab5;
         }
 
         .metric i {
-            color: #88c0d0;
-            /* Frost Blue */
+            color: #00f2ff;
+            /* Electric Blue Icons */
+            text-shadow: 0 0 5px rgba(0, 242, 255, 0.5);
         }
 
         /* ANIMATIONS */
@@ -162,24 +178,24 @@
             0%,
             100% {
                 transform: scale(1);
+                opacity: 0.9;
             }
 
             50% {
                 transform: scale(1.05);
+                opacity: 1;
             }
         }
 
-        @keyframes pulse-soft {
+        @keyframes pulse-sharp {
             0% {
                 transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.1);
+                box-shadow: 0 0 30px rgba(0, 255, 157, 0.4);
             }
 
             100% {
-                transform: scale(1);
+                transform: scale(1.1);
+                box-shadow: 0 0 60px rgba(0, 255, 157, 0.8);
             }
         }
 
@@ -199,9 +215,10 @@
     <!-- ZONE 2: AVATAR -->
     <div id="avatar-panel">
         <div class="orb-container">
+            <div class="ring"></div>
             <div class="orb" id="neo-orb"></div>
         </div>
-        <div id="avatar-status">Online</div>
+        <div id="avatar-status">SYSTEM READY</div>
     </div>
 
     <!-- ZONE 3: STATUS BAR -->
@@ -217,9 +234,10 @@
             </div>
         </div>
 
-        <div class="metric-row" style="justify-content: center; margin-top: 20px;">
+        <div class="metric-row" style="justify-content: center; margin-top: 25px;">
             <div class="metric">
-                <span id="clock" style="font-size: 1.4em; font-weight: 300; color: #eceff4;">12:00</span>
+                <span id="clock"
+                    style="font-size: 1.5em; font-weight: 500; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.2);">12:00</span>
             </div>
         </div>
     </footer>
@@ -232,30 +250,23 @@
         // --- XTERM SETUP ---
         const term = new Terminal({
             theme: {
-                background: '#2e3440', // Nord Polar Night
-                foreground: '#d8dee9', // Nord Snow Storm
-                cursor: '#d8dee9',
-                selection: 'rgba(136, 192, 208, 0.3)',
-                black: '#3b4252',
-                red: '#bf616a',
-                green: '#a3be8c',
-                yellow: '#ebcb8b',
-                blue: '#81a1c1',
-                magenta: '#b48ead',
-                cyan: '#88c0d0',
-                white: '#e5e9f0',
-                brightBlack: '#4c566a',
-                brightRed: '#bf616a',
-                brightGreen: '#a3be8c',
-                brightYellow: '#ebcb8b',
-                brightBlue: '#81a1c1',
-                brightMagenta: '#b48ead',
-                brightCyan: '#8fbcbb',
-                brightWhite: '#eceff4'
+                background: '#1a1e24', // Matching Body
+                foreground: '#a0aab5', // Soft Tech Grey
+                cursor: '#00f2ff', // Electric Cursor
+                selection: 'rgba(0, 242, 255, 0.2)',
+                black: '#1a1e24',
+                red: '#ff5555',
+                green: '#50fa7b',
+                yellow: '#f1fa8c',
+                blue: '#bd93f9',
+                magenta: '#ff79c6',
+                cyan: '#8be9fd',
+                white: '#f8f8f2',
+                brightGreen: '#00f2ff' // Custom highlighting
             },
             fontFamily: '"JetBrains Mono", monospace',
             fontSize: 13,
-            fontWeight: 400,
+            lineHeight: 1.2,
             cursorBlink: false,
             disableStdin: true,
             convertEol: true
@@ -270,29 +281,34 @@
 
         window.addEventListener('resize', () => fitAddon.fit());
 
-        // Custom Welcome Message (Nord Style)
-        term.writeln('\x1b[36m• system_ready\x1b[0m'); // Cyan dot
-        term.writeln('\x1b[90mWaiting for voice input...\x1b[0m'); // Grey text
+        // Custom Welcome Message (Cyberpunk)
+        term.writeln('\x1b[36m┌────────────────────────────────────────┐\x1b[0m');
+        term.writeln('\x1b[36m│ NEO CORE SYSTEM v2.5.0                 │\x1b[0m');
+        term.writeln('\x1b[36m│ STATUS: \x1b[32mONLINE\x1b[36m                         │\x1b[0m');
+        term.writeln('\x1b[36m└────────────────────────────────────────┘\x1b[0m');
+        term.writeln('');
 
         // --- SOCKET EVENTS ---
         socket.on('connect', () => {
-            term.writeln('\x1b[32m• core_connected\x1b[0m');
-            statusText.innerText = "Online";
+            term.writeln('\x1b[90m[SYS] Uplink established.\x1b[0m');
+            statusText.innerText = "SYSTEM READY";
+            statusText.style.color = "#00f2ff";
             body.className = "idle";
         });
 
         socket.on('disconnect', () => {
-            term.writeln('\x1b[31m• core_disconnected\x1b[0m');
-            statusText.innerText = "Offline";
+            term.writeln('\x1b[31m[SYS] Uplink lost.\x1b[0m');
+            statusText.innerText = "OFFLINE";
+            statusText.style.color = "#ff5555";
         });
 
         // 1. LOGS in Terminal
         socket.on('log_message', (data) => {
             let msg = data.msg;
-            // Clean Formatting
-            if (msg.includes('INFO')) msg = `\x1b[32m•\x1b[0m ${msg.replace('INFO', '').trim()}`;
-            else if (msg.includes('WARNING')) msg = `\x1b[33m•\x1b[0m ${msg.replace('WARNING', '').trim()}`;
-            else if (msg.includes('ERROR')) msg = `\x1b[31m•\x1b[0m ${msg.replace('ERROR', '').trim()}`;
+            // Tech Formatting
+            if (msg.includes('INFO')) msg = `\x1b[36m>>>\x1b[0m ${msg.replace('INFO', '').trim()}`;
+            else if (msg.includes('WARNING')) msg = `\x1b[33m[WARN]\x1b[0m ${msg.replace('WARNING', '').trim()}`;
+            else if (msg.includes('ERROR')) msg = `\x1b[31m[ERR]\x1b[0m ${msg.replace('ERROR', '').trim()}`;
 
             term.writeln(msg);
         });
@@ -301,17 +317,17 @@
         socket.on('face_update', (data) => {
             if (data.state) {
                 body.className = data.state;
-                statusText.innerText = data.state;
+                statusText.innerText = data.state.replace('_', ' ').toUpperCase();
             }
         });
 
         // 3. STT / TTS (Transcript)
         socket.on('stt:final', (text) => {
-            term.writeln(`\r\n\x1b[35muser ➜\x1b[0m ${text}`);
+            term.writeln(`\r\n\x1b[35m[USER]\x1b[0m ${text}`);
         });
 
         socket.on('tts:start', (text) => {
-            term.writeln(`\x1b[36mneo ➜\x1b[0m ${text}`);
+            term.writeln(`\x1b[36m[NEO]\x1b[0m ${text}`);
             body.className = "speaking";
         });
 
