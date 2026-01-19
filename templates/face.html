@@ -26,10 +26,9 @@
         body {
             margin: 0;
             height: 100vh;
-            /* Deep Neutral Dark (Less Blue tint) */
-            background-color: #121417;
+            /* Deep Black/Dark Grey */
+            background-color: #0d0e10;
             color: #ecf0f1;
-            /* Crisp White/Grey */
             font-family: 'Outfit', sans-serif;
             display: grid;
             grid-template-columns: 70% 30%;
@@ -43,12 +42,13 @@
         /* --- ZONE 1: TERMINAL (Left) --- */
         #terminal-container {
             grid-area: terminal;
-            background-color: #121417;
-            /* Seamless match */
+            background-color: #0d0e10;
             padding: 30px;
             position: relative;
             overflow: hidden;
             height: 100vh;
+            border-right: 1px solid #1a1c20;
+            /* Subtle separator */
         }
 
         .xterm-viewport {
@@ -66,10 +66,10 @@
             min-height: 300px;
         }
 
-        /* ORB STYLES - ELECTRIC CYBERPUNK (Kept Blue as the center piece) */
+        /* ORB STYLES - SOFT GOLD GLOW (Minimalist) */
         .orb-container {
-            width: 200px;
-            height: 200px;
+            width: 300px;
+            height: 300px;
             position: relative;
             display: flex;
             justify-content: center;
@@ -77,86 +77,63 @@
         }
 
         .orb {
-            width: 110px;
-            height: 110px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            /* Electric Blue Gradient */
-            background: linear-gradient(145deg, #00f2ff 0%, #0066ff 100%);
+            /* Warm Golden Center */
+            background: radial-gradient(circle, rgba(255, 215, 100, 1) 0%, rgba(255, 160, 50, 0.8) 40%, rgba(255, 100, 0, 0) 70%);
+            /* Soft Aura */
             box-shadow:
-                0 0 30px rgba(0, 242, 255, 0.5),
-                inset 0 0 20px rgba(255, 255, 255, 0.4);
+                0 0 60px rgba(255, 170, 50, 0.3),
+                0 0 100px rgba(255, 140, 0, 0.1);
+            filter: blur(15px);
             position: relative;
             z-index: 10;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: breathe 4s ease-in-out infinite;
-        }
-
-        /* Gold Accent Ring */
-        .ring {
-            position: absolute;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 184, 108, 0.3);
-            /* Subtle Orange/Gold */
-            width: 160px;
-            height: 160px;
-            box-shadow: 0 0 10px rgba(255, 184, 108, 0.1);
-            animation: spin 15s linear infinite;
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            animation: breathe-idle 6s ease-in-out infinite;
         }
 
         /* STATES */
+
+        /* LISTENING (Expands, brighter white/gold) */
         body.listening .orb {
             transform: scale(1.1);
-            /* Bright Cyan/White state */
-            background: linear-gradient(145deg, #e0ffff 0%, #00ffff 100%);
-            box-shadow: 0 0 60px rgba(0, 255, 255, 0.7);
+            background: radial-gradient(circle, rgba(255, 250, 220, 1) 0%, rgba(255, 200, 100, 0.9) 50%, rgba(255, 255, 255, 0) 75%);
+            filter: blur(10px);
+            /* Slightly sharper when attentive */
+            box-shadow: 0 0 80px rgba(255, 220, 150, 0.5);
         }
 
-        /* Wave Effect for Listening */
-        body.listening .orb::before,
-        body.listening .orb::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 2px solid rgba(0, 242, 255, 0.6);
-            animation: ripple 2s linear infinite;
-            z-index: -1;
-        }
-
-        body.listening .orb::after {
-            animation-delay: 1s;
-        }
-
-        body.speaking .orb {
-            /* Neon Purple State (Complementary) */
-            background: linear-gradient(145deg, #bd93f9 0%, #ff79c6 100%);
-            box-shadow: 0 0 40px rgba(189, 147, 249, 0.6);
-            animation: pulse-sharp 0.3s infinite alternate;
-            /* Faster pulse */
-        }
-
+        /* THINKING (Pulsing warm orange) */
         body.thinking .orb {
-            /* Warm Orange State (Thinking) */
-            background: linear-gradient(145deg, #ffb86c 0%, #ff5555 100%);
-            box-shadow: 0 0 40px rgba(255, 184, 108, 0.6);
-            animation: spin 1.5s linear infinite;
+            animation: pulse-think 1.5s ease-in-out infinite;
+            background: radial-gradient(circle, rgba(255, 150, 50, 1) 0%, rgba(255, 100, 0, 0.8) 50%, rgba(255, 50, 0, 0) 75%);
+        }
+
+        /* SPEAKING (Dynamic Aura Reaction) */
+        body.speaking .orb {
+            animation: voice-react 0.2s ease-in-out infinite alternate;
+            /* Brighter core when speaking */
+            background: radial-gradient(circle, rgba(255, 230, 150, 1) 0%, rgba(255, 180, 80, 0.9) 50%, rgba(255, 120, 0, 0) 80%);
+            box-shadow:
+                0 0 70px rgba(255, 180, 50, 0.6),
+                0 0 120px rgba(255, 140, 0, 0.3);
         }
 
         #avatar-status {
-            margin-top: 35px;
+            margin-top: 50px;
+            /* Space from Orb */
             font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            font-size: 0.85rem;
-            letter-spacing: 3px;
-            color: #ffb86c;
-            /* Orange/Gold Text */
-            text-transform: uppercase;
+            font-weight: 500;
+            font-size: 0.75rem;
+            /* Smaller, minimalist */
+            letter-spacing: 2px;
+            color: #888;
+            /* Greyed out, unobtrusive */
+            text-transform: lowercase;
+            /* "idle" style */
             text-align: center;
-            text-shadow: 0 0 10px rgba(255, 184, 108, 0.4);
+            opacity: 0.7;
         }
 
         /* --- ZONE 3: STATUS (Right Bottom) --- */
@@ -169,7 +146,14 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.85rem;
             justify-content: flex-end;
-            padding-bottom: 80px;
+            padding-bottom: 50px;
+            opacity: 0.5;
+            /* Fade out status bar to focus on orb */
+            transition: opacity 0.3s;
+        }
+
+        #status-bar:hover {
+            opacity: 1;
         }
 
         .metric-row {
@@ -182,23 +166,22 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #dcdfe4;
-            /* Neutral Grey */
+            color: #666;
+            /* Darker grey */
         }
 
         .metric i {
-            color: #ffb86c;
-            /* Orange Icons for Contrast */
-            text-shadow: 0 0 5px rgba(255, 184, 108, 0.5);
+            color: #444;
+            /* Very subtle icons */
         }
 
         /* ANIMATIONS */
-        @keyframes breathe {
+        @keyframes breathe-idle {
 
             0%,
             100% {
                 transform: scale(1);
-                opacity: 0.9;
+                opacity: 0.8;
             }
 
             50% {
@@ -207,38 +190,31 @@
             }
         }
 
-        @keyframes pulse-sharp {
+        @keyframes pulse-think {
+
+            0%,
+            100% {
+                opacity: 0.7;
+                transform: scale(0.95);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes voice-react {
             0% {
                 transform: scale(1);
-                box-shadow: 0 0 30px rgba(189, 147, 249, 0.4);
+                filter: blur(15px);
+                box-shadow: 0 0 60px rgba(255, 170, 50, 0.4);
             }
 
             100% {
-                transform: scale(1.1);
-                box-shadow: 0 0 60px rgba(189, 147, 249, 0.8);
-            }
-        }
-
-        @keyframes spin {
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes ripple {
-            0% {
-                width: 100%;
-                height: 100%;
-                opacity: 0.8;
-                border-width: 2px;
-            }
-
-            100% {
-                width: 250%;
-                /* Expand significantly */
-                height: 250%;
-                opacity: 0;
-                border-width: 0px;
+                transform: scale(1.15);
+                filter: blur(12px);
+                box-shadow: 0 0 100px rgba(255, 200, 100, 0.8), 0 0 40px rgba(255, 255, 255, 0.4);
             }
         }
     </style>
@@ -252,7 +228,7 @@
     <!-- ZONE 2: AVATAR -->
     <div id="avatar-panel">
         <div class="orb-container">
-            <div class="ring"></div>
+            <!-- Ring removed for minimalist style -->
             <div class="orb" id="neo-orb"></div>
         </div>
         <div id="avatar-status">SYSTEM READY</div>
@@ -332,7 +308,7 @@
             // [SYS] Orange/Gold
             term.writeln('\x1b[38;5;214m[SYS]\x1b[0m \x1b[90mUplink established.\x1b[0m');
             statusText.innerText = "SYSTEM READY";
-            statusText.style.color = "#ffb86c"; // Orange
+            // Color handled by CSS
             body.className = "idle";
         });
 
@@ -340,7 +316,7 @@
             // [SYS] Red
             term.writeln('\x1b[31m[SYS]\x1b[0m \x1b[90mUplink lost.\x1b[0m');
             statusText.innerText = "OFFLINE";
-            statusText.style.color = "#ff5555";
+            // Color handled by CSS
         });
 
         // 1. LOGS in Terminal
@@ -372,6 +348,10 @@
             // [NEO] Bright Cyan
             term.writeln(`\x1b[1;36m[NEO]\x1b[0m ${text}`);
             body.className = "speaking";
+        });
+
+        socket.on('tts:end', () => {
+            body.className = "idle";
         });
 
         socket.on('ai:response', (data) => {
