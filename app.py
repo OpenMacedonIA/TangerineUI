@@ -11,14 +11,14 @@ csrf = CSRFProtect(app)
 
 # Configuration
 # Default to localhost if not set, but Configurator should set this.
-NEO_API_URL = os.environ.get('NEO_API_URL', 'http://localhost:5000')
+WATERMELON_API_URL = os.environ.get('WATERMELON_API_URL', 'http://localhost:5000')
 
 # Ensure URL has schema
-if not NEO_API_URL.startswith(('http://', 'https://')):
-    NEO_API_URL = f"http://{NEO_API_URL}"
+if not WATERMELON_API_URL.startswith(('http://', 'https://')):
+    WATERMELON_API_URL = f"http://{WATERMELON_API_URL}"
 
 # Remove trailing slash to avoid double slashes in paths
-NEO_API_URL = NEO_API_URL.rstrip('/')
+WATERMELON_API_URL = WATERMELON_API_URL.rstrip('/')
 
 def get_headers():
     """Headers for API requests (simulate login or pass API Key)."""
@@ -30,8 +30,8 @@ def get_headers():
     # Current NeoCore uses session cookie. We need to proxy that.
     
     cookies = {}
-    if 'neo_session' in session:
-        cookies['session'] = session['neo_session']
+    if 'watermelon_session' in session:
+        cookies['session'] = session['watermelon_session']
     return {}, cookies
 
 @app.route('/')
@@ -57,17 +57,17 @@ def login():
             import urllib3
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
             
-            resp = requests.post(f"{NEO_API_URL}/login", data={'username': username, 'password': password}, allow_redirects=False, verify=False)
+            resp = requests.post(f"{WATERMELON_API_URL}/login", data={'username': username, 'password': password}, allow_redirects=False, verify=False)
             
             if resp.status_code == 302 and 'dashboard' in resp.headers['Location']:
                 # Success
                 session['logged_in'] = True
-                session['neo_session'] = resp.cookies.get('session') # Store server session cookie
+                session['watermelon_session'] = resp.cookies.get('session') # Store server session cookie
                 return redirect(url_for('dashboard'))
             else:
                 error = "Login fallido en servidor NeoCore."
         except Exception as e:
-            error = f"No se pudo conectar con NeoCore ({NEO_API_URL}): {e}"
+            error = f"No se pudo conectar con WatermelonD ({WATERMELON_API_URL}): {e}"
             
     return render_template('login.html', error=error)
 
@@ -124,11 +124,11 @@ def settings():
     # Fetch content from API
     try:
         headers, cookies = get_headers()
-        resp = requests.get(f"{NEO_API_URL}/api/config/get", cookies=cookies, verify=False)
+        resp = requests.get(f"{WATERMELON_API_URL}/api/config/get", cookies=cookies, verify=False)
         data = resp.json()
         return render_template('settings.html', page='settings', config=data.get('config',{}), voices=data.get('voices',[]), models=data.get('models',[]))
     except Exception as e:
-        return f"Error connecting to NeoCore: {e}"
+        return f"Error connecting to WatermelonD: {e}"
 
 @app.route('/ssh')
 def ssh_page():
@@ -146,7 +146,7 @@ def knowledge():
 def skills():
     try:
         headers, cookies = get_headers()
-        resp = requests.get(f"{NEO_API_URL}/api/skills", cookies=cookies, verify=False)
+        resp = requests.get(f"{WATERMELON_API_URL}/api/skills", cookies=cookies, verify=False)
         return render_template('skills.html', page='skills', config=resp.json())
     except:
         return render_template('skills.html', page='skills', config={})
@@ -156,7 +156,7 @@ def training():
     # Training usually needs config too for TTS/STT options logic
     try:
         headers, cookies = get_headers()
-        resp = requests.get(f"{NEO_API_URL}/api/config/get", cookies=cookies, verify=False)
+        resp = requests.get(f"{WATERMELON_API_URL}/api/config/get", cookies=cookies, verify=False)
         data = resp.json()
         return render_template('training.html', page='training', config=data.get('config', {}))
     except:
@@ -171,7 +171,7 @@ def face():
 @app.route('/api/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def api_proxy(path):
     headers, cookies = get_headers()
-    url = f"{NEO_API_URL}/api/{path}"
+    url = f"{WATERMELON_API_URL}/api/{path}"
     
     try:
         if request.method == 'GET':
@@ -193,7 +193,7 @@ def api_proxy(path):
         return jsonify({'success': False, 'message': f"Proxy Error: {e}"}), 500
 
 if __name__ == "__main__":
-    print(f"🚀 Neo Headless Client starting...")
-    print(f"🔗 Connected to NeoCore at: {NEO_API_URL}")
+    print(f"🚀 WatermelonD Client starting...")
+    print(f"🔗 Connected to Backend at: {WATERMELON_API_URL}")
     print(f"🌍 Web Interface at: http://0.0.0.0:8092")
     app.run(host='0.0.0.0', port=8092, debug=True)
