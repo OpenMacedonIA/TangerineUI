@@ -11,7 +11,7 @@
                 </div>
                 <div>
                     <h6 class="card-subtitle mb-1 text-muted">Aplicación</h6>
-                    <h5 class="card-title mb-0">Actualizar Neo</h5>
+                    <h5 class="card-title mb-0">Actualizar WatermelonD</h5>
                 </div>
             </div>
         </div>
@@ -125,7 +125,7 @@
 
     function runUpdate() {
         const output = document.getElementById('action-output');
-        output.innerHTML = `<span class="text-info">Buscando actualizaciones de Neo (Git Pull)...\nEsto reiniciará el servicio si hay cambios.</span>`;
+        output.innerHTML = `<span class="text-info">Buscando actualizaciones de WatermelonD (Git Pull)...\nEsto reiniciará el servicio si hay cambios.</span>`;
 
         fetch('/api/update', {
             method: 'POST',

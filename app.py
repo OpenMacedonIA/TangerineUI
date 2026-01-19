@@ -22,12 +22,7 @@ WATERMELON_API_URL = WATERMELON_API_URL.rstrip('/')
 
 def get_headers():
     """Headers for API requests (simulate login or pass API Key)."""
-    # For now, we rely on the Server being open or sharing a session cookie concept if complex.
-    # But NeoCore uses session['logged_in']. 
-    # HEADLESS AUTH STRATEGY:
-    # 1. Login on Client -> Client calls Server /login API?
-    # 2. Or Client stores a Token?
-    # Current NeoCore uses session cookie. We need to proxy that.
+
     
     cookies = {}
     if 'watermelon_session' in session:
@@ -49,11 +44,7 @@ def login():
         
         # Proxy Login to Server
         try:
-            # We hit the login form endpoint of server? No, server expects session.
-            # We actually need an API /login which returns a cookie or token.
-            # NeoCore currently uses a standard form login.
-            # Let's try to POST to /login on server and capture the cookie.
-            # Disable warnings for self-signed certs
+
             import urllib3
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
             
@@ -193,7 +184,7 @@ def api_proxy(path):
         return jsonify({'success': False, 'message': f"Proxy Error: {e}"}), 500
 
 if __name__ == "__main__":
-    print(f"🚀 WatermelonD Client starting...")
-    print(f"🔗 Connected to Backend at: {WATERMELON_API_URL}")
-    print(f"🌍 Web Interface at: http://0.0.0.0:8092")
+    print(f" WatermelonD Client starting...")
+    print(f"Connected to Backend at: {WATERMELON_API_URL}")
+    print(f"Web Interface at: http://0.0.0.0:8092")
     app.run(host='0.0.0.0', port=8092, debug=True)
