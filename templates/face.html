@@ -454,7 +454,13 @@
                     // Send command
                     const cmd = inputField.value.trim();
                     if (cmd) {
-                        socket.emit('gui:text_command', { text: cmd });
+                        // Use unified injection API
+                        fetch('/api/command/inject', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ text: cmd })
+                        }).catch(e => console.error(e));
+
                         term.writeln(`\x1b[38;5;180m> [GUI] SENT: ${cmd}\x1b[0m`);
                         inputField.value = '';
                     }
