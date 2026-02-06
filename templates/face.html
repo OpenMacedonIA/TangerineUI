@@ -283,12 +283,16 @@
         <div class="ring ring-2"></div>
         <div class="orb" id="orb"></div>
         <div id="status-text">Standby</div>
-        <!-- Manual Input Overlay -->
-        <div id="input-container" style="display: none; position: absolute; top: 60%; width: 50%; z-index: 100;">
-            <input type="text" id="manual-cmd" style="width: 100%; background: rgba(0,0,0,0.7); border: 2px solid var(--accent-color); 
-                          color: white; font-family: 'JetBrains Mono'; font-size: 1.2rem; padding: 10px; 
-                          border-radius: 8px; backdrop-filter: blur(5px); text-align: center; outline: none;"
-                placeholder="Type command and press Enter...">
+        <!-- Manual Input Overlay (Visible) -->
+        <div id="input-container"
+            style="position: absolute; bottom: 30px; width: 60%; z-index: 100; transition: all 0.3s ease;">
+            <input type="text" id="manual-cmd" style="width: 100%; background: rgba(17, 24, 39, 0.8); border: 1px solid var(--border-color); 
+                          color: var(--text-primary); font-family: 'JetBrains Mono'; font-size: 0.9rem; padding: 12px 20px; 
+                          border-radius: 20px; backdrop-filter: blur(8px); text-align: center; outline: none;
+                          box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.2s;"
+                onfocus="this.style.borderColor = 'var(--accent-color)'; this.style.boxShadow = '0 0 15px var(--accent-glow)';"
+                onblur="this.style.borderColor = 'var(--border-color)'; this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';"
+                placeholder="Type a command...">
         </div>
     </div>
 
@@ -442,10 +446,9 @@
         const inputField = document.getElementById('manual-cmd');
 
         document.addEventListener('keydown', (e) => {
-            // Press 'Enter' to toggle input if not already focused
+            // Press 'Enter' to focus input if not focused
             if (e.key === 'Enter') {
                 if (document.activeElement !== inputField) {
-                    inputContainer.style.display = 'block';
                     inputField.focus();
                 } else {
                     // Send command
@@ -455,13 +458,11 @@
                         term.writeln(`\x1b[38;5;180m> [GUI] SENT: ${cmd}\x1b[0m`);
                         inputField.value = '';
                     }
-                    inputContainer.style.display = 'none';
                     inputField.blur();
                 }
             }
-            // Escape to close
+            // Escape to blur
             if (e.key === 'Escape') {
-                inputContainer.style.display = 'none';
                 inputField.blur();
             }
         });
