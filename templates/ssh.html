@@ -28,40 +28,87 @@
     </div>
 </div>
 
-<!-- Add Server Modal -->
+<!-- Add Server Modal - Touch Optimized -->
 <div id="addServerModal" class="modal"
-    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+    style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; backdrop-filter: blur(4px);">
     <div class="modal-content"
-        style="background:var(--card-bg); margin:10% auto; padding:20px; width:50%; border-radius:8px; border:1px solid var(--border-color);">
-        <h3>Añadir Servidor</h3>
+        style="background:var(--card-bg); margin:5% auto; padding:2rem; max-width:600px; width:90%; border-radius:12px; border:1px solid var(--border-color); box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-server" style="color: var(--primary);"></i>
+                Añadir Servidor
+            </h3>
+            <button onclick="closeModal()"
+                style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; padding: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 6px; transition: all 0.2s;"
+                onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='none'">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
         <form id="addServerForm" onsubmit="addServer(event)">
-            <div class="form-group">
-                <label>Alias (Nombre único)</label>
-                <input type="text" name="alias" required placeholder="ej: produccion">
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label
+                    style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-weight: 500;">
+                    <i class="fas fa-tag" style="color: var(--primary); width: 20px;"></i>
+                    Alias (Nombre único) <span style="color: var(--danger);">*</span>
+                </label>
+                <input type="text" name="alias" required placeholder="ej: produccion"
+                    style="width: 100%; min-height: 48px; padding: 0.75rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--input-bg); color: var(--text-main); transition: all 0.2s;">
             </div>
-            <div class="form-group">
-                <label>Host (IP o Dominio)</label>
-                <input type="text" name="host" required placeholder="ej: 192.168.1.100">
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label
+                    style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-weight: 500;">
+                    <i class="fas fa-globe" style="color: var(--primary); width: 20px;"></i>
+                    Host (IP o Dominio) <span style="color: var(--danger);">*</span>
+                </label>
+                <input type="text" name="host" required placeholder="ej: 192.168.1.100"
+                    style="width: 100%; min-height: 48px; padding: 0.75rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--input-bg); color: var(--text-main); transition: all 0.2s;">
             </div>
-            <div class="form-group">
-                <label>Usuario</label>
-                <input type="text" name="user" required placeholder="ej: root">
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label
+                    style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-weight: 500;">
+                    <i class="fas fa-user" style="color: var(--primary); width: 20px;"></i>
+                    Usuario <span style="color: var(--danger);">*</span>
+                </label>
+                <input type="text" name="user" required placeholder="ej: root"
+                    style="width: 100%; min-height: 48px; padding: 0.75rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--input-bg); color: var(--text-main); transition: all 0.2s;">
             </div>
-            <div class="form-group">
-                <label>Puerto</label>
-                <input type="number" name="port" value="22" required>
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label
+                    style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-weight: 500;">
+                    <i class="fas fa-network-wired" style="color: var(--primary); width: 20px;"></i>
+                    Puerto <span style="color: var(--danger);">*</span>
+                </label>
+                <input type="number" name="port" value="22" required
+                    style="width: 100%; min-height: 48px; padding: 0.75rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--input-bg); color: var(--text-main); transition: all 0.2s;">
             </div>
-            <div class="form-group">
-                <label>Contraseña (Opcional si usas claves)</label>
-                <input type="password" name="password">
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label
+                    style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-weight: 500;">
+                    <i class="fas fa-lock" style="color: var(--text-muted); width: 20px;"></i>
+                    Contraseña <span style="color: var(--text-muted); font-size: 0.85rem;">(Opcional si usas
+                        claves)</span>
+                </label>
+                <input type="password" name="password"
+                    style="width: 100%; min-height: 48px; padding: 0.75rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--input-bg); color: var(--text-main); transition: all 0.2s;">
             </div>
-            <div class="form-group">
-                <label>Ruta Key (Opcional)</label>
-                <input type="text" name="key_path" placeholder="/home/user/.ssh/id_rsa">
+            <div class="form-group" style="margin-bottom: 2rem;">
+                <label
+                    style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-weight: 500;">
+                    <i class="fas fa-key" style="color: var(--text-muted); width: 20px;"></i>
+                    Ruta Key <span style="color: var(--text-muted); font-size: 0.85rem;">(Opcional)</span>
+                </label>
+                <input type="text" name="key_path" placeholder="/home/user/.ssh/id_rsa"
+                    style="width: 100%; min-height: 48px; padding: 0.75rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid var(--border-color); background: var(--input-bg); color: var(--text-main); transition: all 0.2s;">
             </div>
-            <div class="form-actions">
-                <button type="button" onclick="closeModal()" class="btn-secondary">Cancelar</button>
-                <button type="submit" class="btn-primary">Guardar</button>
+            <div class="form-actions" style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button type="button" onclick="closeModal()" class="btn-secondary"
+                    style="min-height: 48px; padding: 0.75rem 2rem; font-size: 1rem; border-radius: 8px; min-width: 120px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer;">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="submit" class="btn-primary"
+                    style="min-height: 48px; padding: 0.75rem 2rem; font-size: 1rem; border-radius: 8px; min-width: 120px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer;">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
             </div>
         </form>
     </div>

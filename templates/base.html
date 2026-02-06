@@ -224,6 +224,51 @@
             background-color: var(--bg-hover);
         }
 
+        /* Touch-Friendly Optimizations */
+        button,
+        .btn,
+        .btn-primary,
+        .btn-secondary,
+        .btn-danger {
+            min-height: 44px;
+            min-width: 44px;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        input,
+        textarea,
+        select {
+            min-height: 44px;
+            padding: 0.625rem 0.875rem;
+            font-size: 1rem;
+            touch-action: manipulation;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .nav-link {
+            min-height: 48px;
+            padding: 0.875rem 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Better touch feedback */
+        button:active,
+        .btn:active {
+            transform: scale(0.98);
+            transition: transform 0.1s;
+        }
+
         @media (max-width: 992px) {
             .sidebar {
                 transform: translateX(-100%);
