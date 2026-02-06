@@ -101,6 +101,22 @@
         </div>
     </div>
 
+    <!-- Command Input -->
+    <div class="col-md-6" data-id="widget-command-input">
+        <div class="card h-100 shadow-sm widget-card">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <h5 class="card-title mb-3"><i class="fas fa-keyboard me-2 text-primary"></i>Comando de Texto</h5>
+                <div class="input-group">
+                    <input type="text" id="cmd-input" class="form-control" placeholder="Escribe un comando..."
+                        onkeypress="handleCmdKey(event)">
+                    <button class="btn btn-primary" onclick="sendWebCommand()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- System Info Widget -->
     <div class="col-md-6">
         <div class="card h-100">
@@ -245,5 +261,32 @@
             }
         });
     });
+
+    // --- Web Command Injection ---
+    function sendWebCommand() {
+        const input = document.getElementById('cmd-input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        notify("Enviando...", text, "info");
+
+        fetch('/api/command/inject', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: text })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    input.value = '';
+                } else {
+                    notify("Error", data.message, "danger");
+                }
+            });
+    }
+
+    function handleCmdKey(e) {
+        if (e.key === 'Enter') sendWebCommand();
+    }
 </script>
 {% endblock %}

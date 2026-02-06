@@ -540,6 +540,21 @@
         socket.on('disconnect', () => {
             console.log('Disconnected from WebSocket');
         });
+
+        // Feedback Listeners
+        socket.on('stt:result', (data) => {
+            // Visual feedback for recognized speech
+            if (data && data.text) {
+                notify("Escuchando...", data.text, "info");
+            }
+        });
+
+        socket.on('ai:response', (data) => {
+            // Visual feedback for AI response
+            if (data && data.text) {
+                notify("Neo", data.text, "success");
+            }
+        });
     </script>
 
     <!-- Fix closing tags -->
