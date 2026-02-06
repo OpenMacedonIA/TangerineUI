@@ -361,8 +361,9 @@
 
         writeLog('System initialized.', '\x1b[38;5;250m');
 
-        // Connect Socket
-        const socket = io();
+        // Connect Socket to NeoCore (where events are emitted)
+        const socketUrl = "{{ socket_url }}" || undefined;
+        const socket = io(socketUrl);
 
         // --- EVENTS ---
 
@@ -371,23 +372,23 @@
             let msg = data.msg;
             if (msg.includes('DEBUG')) return;
             msg = msg.replace(/\n/g, '\r\n');
-            // Very dim for logs
-            term.writeln(`\x1b[38;5;237m${msg}\x1b[0m`);
+            // Brighter gray for better visibility
+            term.writeln(`\x1b[38;5;246m${msg}\x1b[0m`);
         });
 
         // 2. STT Result (User Voice)
         socket.on('stt:result', (data) => {
             const text = data.text;
             term.writeln('');
-            // White, bold for User
-            term.writeln(`\x1b[1;37m${text}\x1b[0m`);
+            // Bright white, bold for User input
+            term.writeln(`\x1b[1;97m${text}\x1b[0m`);
         });
 
         // 3. AI Thinking/Response
         socket.on('ai:response', (data) => {
             const text = data.text;
-            // Sky Blue for AI
-            term.writeln(`\x1b[38;5;75mNeo: ${text}\x1b[0m`);
+            // Bright cyan for AI response
+            term.writeln(`\x1b[1;96mNeo: ${text}\x1b[0m`);
         });
 
         // 4. Command Execution
