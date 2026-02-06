@@ -6,6 +6,10 @@ from flask_wtf.csrf import CSRFProtect
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.secret_key = os.urandom(24) # Random key for client session
 
+@app.context_processor
+def inject_socket_url():
+    return dict(socket_url=NEO_API_URL)
+
 # Initialize CSRF Protection
 csrf = CSRFProtect(app)
 

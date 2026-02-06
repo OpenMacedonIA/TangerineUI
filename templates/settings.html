@@ -318,104 +318,103 @@
 
         </div>
     </div>
-</div>
-{% endblock %}
+    {% endblock %}
 
-{% block scripts %}
-<script>
-    // Load User Docs on Start
-    document.addEventListener('DOMContentLoaded', function () {
-        fetch('/api/settings/user_docs')
-            .then(r => r.json())
-            .then(data => {
-                document.getElementById('docs-editor').value = JSON.stringify(data, null, 4);
-            });
-    });
-
-    function saveDocsConfig() {
-        const content = document.getElementById('docs-editor').value;
-        try {
-            const json = JSON.parse(content);
-            fetch('/api/settings/user_docs', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(json)
-            })
-                .then(res => res.json())
+    {% block scripts %}
+    <script>
+        // Load User Docs on Start
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/api/settings/user_docs')
+                .then(r => r.json())
                 .then(data => {
-                    if (data.status === 'success') {
-                        window.notify("Guardado", "Shortcuts actualizados.", "success");
-                    } else {
-                        window.notify("Error", data.message, "danger");
-                    }
+                    document.getElementById('docs-editor').value = JSON.stringify(data, null, 4);
                 });
-        } catch (e) {
-            window.notify("JSON Inválido", e, "danger");
-        }
-    }
+        });
 
-    function restartSystem() {
-        if (confirm("¿Estás seguro de que quieres reiniciar el sistema?")) {
-            // Show overlay immediately
-            document.getElementById('connection-overlay').classList.remove('d-none');
-
-            fetch('/api/restart', { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    window.notify("Reiniciando", data.message, "warning");
+        function saveDocsConfig() {
+            const content = document.getElementById('docs-editor').value;
+            try {
+                const json = JSON.parse(content);
+                fetch('/api/settings/user_docs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(json)
                 })
-                .catch(error => {
-                    document.getElementById('connection-overlay').classList.add('d-none');
-                    window.notify("Error", "Error al intentar reiniciar.", "danger");
-                });
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            window.notify("Guardado", "Shortcuts actualizados.", "success");
+                        } else {
+                            window.notify("Error", data.message, "danger");
+                        }
+                    });
+            } catch (e) {
+                window.notify("JSON Inválido", e, "danger");
+            }
         }
-    }
 
-    function saveConfig() {
-        const content = document.getElementById('json-editor').value;
-        try {
-            const json = JSON.parse(content); // Validate JSON
-            fetch('/api/config/save', {
+        function restartSystem() {
+            if (confirm("¿Estás seguro de que quieres reiniciar el sistema?")) {
+                // Show overlay immediately
+                document.getElementById('connection-overlay').classList.remove('d-none');
+
+                fetch('/api/restart', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        window.notify("Reiniciando", data.message, "warning");
+                    })
+                    .catch(error => {
+                        document.getElementById('connection-overlay').classList.add('d-none');
+                        window.notify("Error", "Error al intentar reiniciar.", "danger");
+                    });
+            }
+        }
+
+        function saveConfig() {
+            const content = document.getElementById('json-editor').value;
+            try {
+                const json = JSON.parse(content); // Validate JSON
+                fetch('/api/config/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(json)
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.notify("Guardado", "Configuración guardada. Reinicia para aplicar.", "success");
+                        } else {
+                            window.notify("Error", 'Error guardando: ' + data.message, "danger");
+                        }
+                    });
+            } catch (e) {
+                window.notify("JSON Inválido", 'Error en sintaxis JSON: ' + e, "danger");
+            }
+        }
+        function toggleExperimental(feature, enabled) {
+            fetch('/api/config/experimental', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(json)
+                body: JSON.stringify({ feature: feature, enabled: enabled })
             })
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        window.notify("Guardado", "Configuración guardada. Reinicia para aplicar.", "success");
+                        console.log(feature + " updated to " + enabled);
+                        window.notify("Configuración Actualizada", "Función experimental modificada.", "info");
                     } else {
-                        window.notify("Error", 'Error guardando: ' + data.message, "danger");
+                        window.notify("Error", "Error actualizando configuración.", "danger");
+                        // Revert checkbox if failed
+                        document.getElementById('exp_voice_auth').checked = !enabled;
                     }
                 });
-        } catch (e) {
-            window.notify("JSON Inválido", 'Error en sintaxis JSON: ' + e, "danger");
         }
-    }
-    function toggleExperimental(feature, enabled) {
-        fetch('/api/config/experimental', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ feature: feature, enabled: enabled })
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    console.log(feature + " updated to " + enabled);
-                    window.notify("Configuración Actualizada", "Función experimental modificada.", "info");
-                } else {
-                    window.notify("Error", "Error actualizando configuración.", "danger");
-                    // Revert checkbox if failed
-                    document.getElementById('exp_voice_auth').checked = !enabled;
-                }
-            });
-    }
 
-    function checkForUpdates() {
-        window.notify("Buscando Actualizaciones", "Conectando con repositorio central...", "info");
-        setTimeout(() => {
-            window.notify("Sistema Actualizado", "Genial, ya tienes la versión más reciente (v2.5.0 Stable).", "success");
-        }, 2000);
-    }
-</script>
-{% endblock %}
+        function checkForUpdates() {
+            window.notify("Buscando Actualizaciones", "Conectando con repositorio central...", "info");
+            setTimeout(() => {
+                window.notify("Sistema Actualizado", "Genial, ya tienes la versión más reciente (v2.5.0 Stable).", "success");
+            }, 2000);
+        }
+    </script>
+    {% endblock %}

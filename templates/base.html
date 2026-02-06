@@ -529,7 +529,8 @@
 
     <script>
         // Global Socket.IO connection
-        const socket = io();
+        const socketUrl = "{{ socket_url }}" || undefined;
+        const socket = io(socketUrl);
 
         socket.on('connect', () => {
             console.log('Connected to WebSocket');
