@@ -451,15 +451,15 @@
                 if (document.activeElement !== inputField) {
                     inputField.focus();
                 } else {
-                    // Send command
+                    // Send command via Message Bus (like inject_command.py)
                     const cmd = inputField.value.trim();
                     if (cmd) {
-                        // Use unified injection API
-                        fetch('/api/command/inject', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ text: cmd })
-                        }).catch(e => console.error(e));
+                        // Emit to bus using the same event as inject_command.py
+                        socket.emit('message', {
+                            type: 'command:inject',
+                            data: { text: cmd },
+                            context: { source: 'FaceUI' }
+                        });
 
                         term.writeln(`\x1b[38;5;180m> [GUI] SENT: ${cmd}\x1b[0m`);
                         inputField.value = '';
