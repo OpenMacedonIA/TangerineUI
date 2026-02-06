@@ -283,6 +283,13 @@
         <div class="ring ring-2"></div>
         <div class="orb" id="orb"></div>
         <div id="status-text">Standby</div>
+        <!-- Manual Input Overlay -->
+        <div id="input-container" style="display: none; position: absolute; top: 60%; width: 50%; z-index: 100;">
+            <input type="text" id="manual-cmd" style="width: 100%; background: rgba(0,0,0,0.7); border: 2px solid var(--accent-color); 
+                          color: white; font-family: 'JetBrains Mono'; font-size: 1.2rem; padding: 10px; 
+                          border-radius: 8px; backdrop-filter: blur(5px); text-align: center; outline: none;"
+                placeholder="Type command and press Enter...">
+        </div>
     </div>
 
     <!-- Bottom Bar -->
@@ -429,6 +436,35 @@
         // Poll every 3s
         setInterval(updateStats, 3000);
         updateStats();
+
+        // --- Manual Input Logic ---
+        const inputContainer = document.getElementById('input-container');
+        const inputField = document.getElementById('manual-cmd');
+
+        document.addEventListener('keydown', (e) => {
+            // Press 'Enter' to toggle input if not already focused
+            if (e.key === 'Enter') {
+                if (document.activeElement !== inputField) {
+                    inputContainer.style.display = 'block';
+                    inputField.focus();
+                } else {
+                    // Send command
+                    const cmd = inputField.value.trim();
+                    if (cmd) {
+                        socket.emit('gui:text_command', { text: cmd });
+                        term.writeln(`\x1b[38;5;180m> [GUI] SENT: ${cmd}\x1b[0m`);
+                        inputField.value = '';
+                    }
+                    inputContainer.style.display = 'none';
+                    inputField.blur();
+                }
+            }
+            // Escape to close
+            if (e.key === 'Escape') {
+                inputContainer.style.display = 'none';
+                inputField.blur();
+            }
+        });
 
     </script>
 </body>
