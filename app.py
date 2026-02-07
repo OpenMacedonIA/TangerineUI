@@ -197,7 +197,7 @@ def api_proxy(path):
         return jsonify({'success': False, 'message': f"Proxy Error: {e}"}), 500
 
 if __name__ == "__main__":
-    print(f"🚀 Neo Headless Client starting...")
-    print(f"🔗 Connected to NeoCore at: {NEO_API_URL}")
-    print(f"🌍 Web Interface at: http://0.0.0.0:8000")
+    print(f"[START] Neo Headless Client starting...")
+    print(f"[LINK] Connected to NeoCore at: {NEO_API_URL}")
+    print(f"[WEB] Web Interface at: http://0.0.0.0:8000")
     app.run(host='0.0.0.0', port=8000)
