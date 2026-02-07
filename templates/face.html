@@ -263,6 +263,125 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+
+        /* --- PIP MODE --- */
+        .avatar-container.pip-mode {
+            position: fixed !important;
+            top: 20px !important;
+            right: 20px !important;
+            width: 120px !important;
+            height: 120px !important;
+            z-index: 9999 !important;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            grid-area: unset !important;
+        }
+
+        .avatar-container.pip-mode .orb {
+            width: 60px !important;
+            height: 60px !important;
+        }
+
+        .avatar-container.pip-mode .ring {
+            width: 80px !important;
+            height: 80px !important;
+        }
+
+        .avatar-container.pip-mode #status-text {
+            display: none;
+        }
+
+        .avatar-container.pip-mode #input-container {
+            display: none !important;
+        }
+
+        .avatar-container.pip-mode a {
+            display: none !important;
+        }
+
+        /* File Viewer Overlay */
+        #file-viewer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            z-index: 1000;
+            overflow: auto;
+            padding: 3rem;
+        }
+
+        #file-viewer.active {
+            display: block;
+        }
+
+        #file-viewer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--panel-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        #file-viewer-content pre {
+            background: var(--terminal-bg);
+            color: var(--text-primary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        #file-viewer-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        #file-viewer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #file-viewer-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .close-viewer-btn {
+            background: rgba(248, 113, 113, 0.15);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .close-viewer-btn:hover {
+            background: rgba(248, 113, 113, 0.3);
+            box-shadow: 0 0 15px rgba(248, 113, 113, 0.3);
+        }
+
+        /* Hide terminal/bottom bar in PIP mode */
+        body.pip-active .terminal-container,
+        body.pip-active .bottom-bar {
+            opacity: 0.3;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -305,6 +424,17 @@
             onmouseout="this.style.background='rgba(56, 189, 248, 0.15)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.3)';">
             Admin Panel
         </a>
+    </div>
+
+    <!-- File Viewer Overlay (PIP Mode) -->
+    <div id="file-viewer">
+        <div id="file-viewer-content">
+            <div id="file-viewer-header">
+                <div id="file-viewer-title">Loading...</div>
+                <button class="close-viewer-btn" onclick="closePIPMode()">Close (ESC)</button>
+            </div>
+            <div id="file-content-display"></div>
+        </div>
     </div>
 
     <!-- Bottom Bar -->
@@ -452,6 +582,124 @@
         // Poll every 3s
         setInterval(updateStats, 3000);
         updateStats();
+
+        // --- PIP MODE HANDLER ---
+        let pipModeActive = false;
+
+        socket.on('ui:pip_mode', (data) => {
+            console.log('PIP Mode Event:', data);
+
+            if (data.enabled && data.action === 'show') {
+                enterPIPMode(data);
+            } else if (!data.enabled || data.action === 'close') {
+                exitPIPMode();
+            }
+        });
+
+        function enterPIPMode(data) {
+            pipModeActive = true;
+            document.body.classList.add('pip-active');
+            avatarContainer.classList.add('pip-mode');
+
+            const fileViewer = document.getElementById('file-viewer');
+            const fileTitle = document.getElementById('file-viewer-title');
+            const fileContent = document.getElementById('file-content-display');
+
+            const fileName = data.file_path ? data.file_path.split('/').pop() : 'File';
+            fileTitle.textContent = fileName;
+
+            const contentUrl = `/api/visual/content?path=${encodeURIComponent(data.file_path)}`;
+
+            if (data.file_type === 'txt' || data.file_type === 'md' || data.file_type === 'log' || data.file_type === 'conf') {
+                fetch(contentUrl)
+                    .then(r => r.text())
+                    .then(text => {
+                        fileContent.innerHTML = `<pre>${escapeHtml(text)}</pre>`;
+                    })
+                    .catch(err => {
+                        fileContent.innerHTML = `<pre>Error loading file: ${err.message}</pre>`;
+                    });
+            } else if (['py', 'js', 'sh', 'json', 'yaml', 'yml', 'xml', 'html', 'css'].includes(data.file_type)) {
+                fetch(contentUrl)
+                    .then(r => r.text())
+                    .then(code => {
+                        fileContent.innerHTML = `<pre><code>${escapeHtml(code)}</code></pre>`;
+                    })
+                    .catch(err => {
+                        fileContent.innerHTML = `<pre>Error loading file: ${err.message}</pre>`;
+                    });
+            } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(data.file_type)) {
+                fileContent.innerHTML = `<img src="${contentUrl}" alt="${fileName}">`;
+            } else if (data.file_type === 'external') {
+                fileContent.innerHTML = `<div style="text-align: center; padding: 3rem;">
+                    <p style="font-size: 1.1rem; color: var(--text-secondary);">File opened in external viewer: <strong>${data.viewer_app}</strong></p>
+                    <p style="color: var(--text-dim); margin-top: 1rem;">Say "close" or press ESC to exit PIP mode</p>
+                </div>`;
+            }
+
+            fileViewer.classList.add('active');
+            statusText.textContent = 'Listening (PIP)';
+            console.log('Entered PIP mode for:', data.file_path);
+        }
+
+        function exitPIPMode() {
+            if (!pipModeActive) return;
+
+            pipModeActive = false;
+            document.body.classList.remove('pip-active');
+            avatarContainer.classList.remove('pip-mode');
+
+            const fileViewer = document.getElementById('file-viewer');
+            fileViewer.classList.remove('active');
+
+            const fileContent = document.getElementById('file-content-display');
+            fileContent.innerHTML = '';
+
+            statusText.textContent = 'Standby';
+            console.log('Exited PIP mode');
+        }
+
+        function closePIPMode() {
+            exitPIPMode();
+
+            fetch('/api/command/inject', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: 'cierra la pantalla' })
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ESC key handler
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && pipModeActive) {
+                closePIPMode();
+            }
+        });
+
+        // Auto-close on voice commands - Intercept STT results
+        const originalSTTHandler = (data) => {
+            const output = data.text;
+            term.writeln(`\\x1b[32m👤 USER: ${output}\\x1b[0m`);
+
+            // Check for close keywords if in PIP mode
+            if (pipModeActive) {
+                const text = output.toLowerCase();
+                const closeKeywords = ['cierra', 'cerrar', 'vale perfecto', 'quita', 'cancel'];
+
+                if (closeKeywords.some(kw => text.includes(kw))) {
+                    console.log('Auto-closing PIP mode due to voice command:', text);
+                    exitPIPMode();
+                }
+            }
+        };
+
+        socket.on('stt:result', originalSTTHandler);
 
         // --- Manual Input Logic ---
         const inputContainer = document.getElementById('input-container');
