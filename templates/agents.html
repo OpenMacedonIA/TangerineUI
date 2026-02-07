@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+
+{% block title %}MQTT Agents{% endblock %}
+
+{% block head_extra %}
+<style>
+    .agent-card {
+        background: var(--surface);
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid var(--primary);
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .agent-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .agent-online {
+        border-left-color: #4CAF50;
+    }
+    
+    .agent-offline {
+        border-left-color: #F44336;
+    }
+    
+    .status-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+    
+    .status-online {
+        background-color: #4CAF50;
+        box-shadow: 0 0 10px #4CAF50;
+    }
+    
+    .status-offline {
+        background-color: #F44336;
+    }
+    
+    .telemetry-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .telemetry-item {
+        background: var(--background);
+        padding: 0.75rem;
+        border-radius: 6px;
+        text-align: center;
+    }
+    
+    .telemetry-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary);
+    }
+    
+    .telemetry-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: 0.25rem;
+    }
+    
+    .broker-info {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+    
+    .broker-info h3 {
+        margin: 0 0 1rem 0;
+    }
+    
+    .ip-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .ip-list li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .ip-list li:last-child {
+        border-bottom: none;
+    }
+    
+    .btn-download {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-download:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateY(-2px);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: var(--text-secondary);
+    }
+    
+    .empty-state svg {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-content">
+    <div class="page-header">
+        <h1>🔌 MQTT Agents</h1>
+        <p>Gestionar agentes satélite BerryConnect</p>
+    </div>
+
+    <!-- Broker Info -->
+    <div class="broker-info">
+        <h3>📡 MQTT Broker Information</h3>
+        <div id="broker-info-content">
+            <p>Cargando...</p>
+        </div>
+        <button class="btn-download" onclick="generateInstaller()">
+            ⬇️ Generate Installer Script
+        </button>
+    </div>
+
+    <!-- Agents List -->
+    <div class="section-card">
+        <h2>Connected Agents</h2>
+        <div id="agents-container">
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
+                    <path d="M7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                </svg>
+                <p>No agents connected yet</p>
+                <small>Install the BerryConnect agent on your satellite devices to get started</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="section-card">
+        <h2>📖 Setup Instructions</h2>
+        <ol>
+            <li>Click "<strong>Generate Installer Script</strong>" above to download a pre-configured installer</li>
+            <li>Copy the entire <code>BerryConnect/PiZero</code> folder to your satellite Raspberry Pi</li>
+            <li>Run <code>chmod +x install.sh && ./install.sh</code> on the satellite device</li>
+            <li>The agent will auto-discover the broker and start sending telemetry</li>
+            <li>Agents will appear here automatically once connected</li>
+        </ol>
+        
+        <h3 style="margin-top: 2rem;">Manual Configuration</h3>
+        <p>If auto-discovery fails, create <code>config.json</code> manually:</p>
+        <pre style="background: var(--surface); padding: 1rem; border-radius: 6px; overflow-x: auto;"><code>{
+  "broker_address": "<span id="broker-ip-placeholder">your.broker.ip</span>",
+  "broker_port": 1883,
+  "agent_id": "AUTO",
+  "telemetry_interval": 10,
+  "log_level": "INFO"
+}</code></pre>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let brokerInfo = null;
+    
+    async function loadBrokerInfo() {
+        try {
+            const response = await fetch('/api/mqtt/broker/info');
+            const data = await response.json();
+            brokerInfo = data;
+            
+            const ips = data.local_ips || [];
+            const primaryIP = ips[0] || 'localhost';
+            
+            document.getElementById('broker-info-content').innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div>
+                        <strong>Status:</strong><br>
+                        ${data.enabled ? '<span class="status-indicator status-online"></span>Active' : '<span class="status-indicator status-offline"></span>Inactive'}
+                    </div>
+                    <div>
+                        <strong>Port:</strong><br>
+                        ${data.broker_port}
+                    </div>
+                    <div>
+                        <strong>Primary IP:</strong><br>
+                        <code>${primaryIP}</code>
+                    </div>
+                </div>
+                ${ips.length > 1 ? `
+                <div style="margin-top: 1rem;">
+                    <strong>All Network Interfaces:</strong>
+                    <ul class="ip-list">
+                        ${ips.map(ip => `<li><code>${ip}</code></li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+            `;
+            
+            // Update placeholder
+            document.getElementById('broker-ip-placeholder').textContent = primaryIP;
+        } catch (error) {
+            console.error('Error loading broker info:', error);
+            document.getElementById('broker-info-content').innerHTML = '<p style="color: #F44336;">Error loading broker info</p>';
+        }
+    }
+    
+    async function loadAgents() {
+        try {
+            const response = await fetch('/api/mqtt/agents');
+            const agents = await response.json();
+            
+            const container = document.getElementById('agents-container');
+            
+            if (Object.keys(agents).length === 0) {
+                // Keep empty state
+                return;
+            }
+            
+            container.innerHTML = Object.entries(agents).map(([id, agent]) => {
+                const isOnline = agent.status === 'online';
+                const data = agent.telemetry || {};
+                
+                return `
+                    <div class="agent-card ${isOnline ? 'agent-online' : 'agent-offline'}">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3>
+                                <span class="status-indicator ${isOnline ? 'status-online' : 'status-offline'}"></span>
+                                ${agent.id || id}
+                            </h3>
+                            <button class="btn btn-danger" onclick="removeAgent('${id}')">Remove</button>
+                        </div>
+                        
+                        ${data.hostname ? `<p><strong>Hostname:</strong> ${data.hostname}</p>` : ''}
+                        ${data.ip ? `<p><strong>IP:</strong> <code>${data.ip}</code></p>` : ''}
+                        
+                        ${Object.keys(data).length > 0 ? `
+                        <div class="telemetry-grid">
+                            ${data.cpu_percent !== undefined ? `
+                            <div class="telemetry-item">
+                                <div class="telemetry-value">${data.cpu_percent.toFixed(1)}%</div>
+                                <div class="telemetry-label">CPU</div>
+                            </div>
+                            ` : ''}
+                            ${data.ram_percent !== undefined ? `
+                            <div class="telemetry-item">
+                                <div class="telemetry-value">${data.ram_percent.toFixed(1)}%</div>
+                                <div class="telemetry-label">RAM</div>
+                            </div>
+                            ` : ''}
+                            ${data.cpu_temp !== undefined ? `
+                            <div class="telemetry-item">
+                                <div class="telemetry-value">${data.cpu_temp.toFixed(1)}°C</div>
+                                <div class="telemetry-label">Temperature</div>
+                            </div>
+                            ` : ''}
+                        </div>
+                        ` : '<p><em>No telemetry data yet</em></p>'}
+                    </div>
+                `;
+            }).join('');
+            
+        } catch (error) {
+            console.error('Error loading agents:', error);
+        }
+    }
+    
+    async function removeAgent(agentId) {
+        if (!confirm(`Remove agent "${agentId}"?`)) return;
+        
+        try {
+            const response = await fetch(`/api/mqtt/agent/${agentId}`, {
+                method: 'DELETE'
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                loadAgents();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error removing agent:', error);
+            alert('Error removing agent');
+        }
+    }
+    
+    async function generateInstaller() {
+        try {
+            const response = await fetch('/api/mqtt/generate_installer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Create download
+                const blob = new Blob([data.installer], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `berry_install_${data.broker_ip}.sh`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                alert(`Installer generated!\\n\\nBroker: ${data.broker_ip}:${data.broker_port}\\n\\nCopy this script to your satellite device and run it.`);
+            } else {
+                alert('Error: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error generating installer:', error);
+            alert('Error generating installer');
+        }
+    }
+    
+    // Load data on page load
+    loadBrokerInfo();
+    loadAgents();
+    
+    // Auto-refresh every 10 seconds
+    setInterval(loadAgents, 10000);
+</script>
+{% endblock %}

@@ -354,6 +354,9 @@
             <a href="{{ url_for('training') }}" class="nav-link {% if page == 'training' %}active{% endif %}">
                 <i class="fas fa-dumbbell"></i> Entrenamiento
             </a>
+            <a href="{{ url_for('agents') }}" class="nav-link {% if page == 'agents' %}active{% endif %}">
+                <i class="fas fa-satellite-dish"></i> Agentes MQTT
+            </a>
             {% if config.neo_ssh_enabled %}
             <a href="{{ url_for('ssh_page') }}" class="nav-link {% if page == 'ssh' %}active{% endif %}">
                 <i class="fas fa-server"></i> SSH
