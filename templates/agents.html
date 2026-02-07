@@ -12,20 +12,20 @@
         margin-bottom: 1rem;
         transition: all 0.3s ease;
     }
-    
+
     .agent-card:hover {
         transform: translateX(5px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
-    
+
     .agent-online {
         border-left-color: #4CAF50;
     }
-    
+
     .agent-offline {
         border-left-color: #F44336;
     }
-    
+
     .status-indicator {
         display: inline-block;
         width: 10px;
@@ -33,42 +33,42 @@
         border-radius: 50%;
         margin-right: 8px;
     }
-    
+
     .status-online {
         background-color: #4CAF50;
         box-shadow: 0 0 10px #4CAF50;
     }
-    
+
     .status-offline {
         background-color: #F44336;
     }
-    
+
     .telemetry-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 1rem;
         margin-top: 1rem;
     }
-    
+
     .telemetry-item {
         background: var(--background);
         padding: 0.75rem;
         border-radius: 6px;
         text-align: center;
     }
-    
+
     .telemetry-value {
         font-size: 1.5rem;
         font-weight: bold;
         color: var(--primary);
     }
-    
+
     .telemetry-label {
         font-size: 0.85rem;
         color: var(--text-secondary);
         margin-top: 0.25rem;
     }
-    
+
     .broker-info {
         background: linear-gradient(135deg, var(--primary), var(--primary-dark));
         color: white;
@@ -76,28 +76,28 @@
         border-radius: 8px;
         margin-bottom: 2rem;
     }
-    
+
     .broker-info h3 {
         margin: 0 0 1rem 0;
     }
-    
+
     .ip-list {
         list-style: none;
         padding: 0;
         margin: 0;
     }
-    
+
     .ip-list li {
         padding: 0.5rem 0;
-        border-bottom: 1px solid rgba(255,255,255,0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
-    
+
     .ip-list li:last-child {
         border-bottom: none;
     }
-    
+
     .btn-download {
-        background: rgba(255,255,255,0.2);
+        background: rgba(255, 255, 255, 0.2);
         color: white;
         padding: 0.75rem 1.5rem;
         border: none;
@@ -106,23 +106,113 @@
         font-weight: bold;
         transition: all 0.3s ease;
     }
-    
+
     .btn-download:hover {
-        background: rgba(255,255,255,0.3);
+        background: rgba(255, 255, 255, 0.3);
         transform: translateY(-2px);
     }
-    
+
     .empty-state {
         text-align: center;
         padding: 3rem;
         color: var(--text-secondary);
     }
-    
+
     .empty-state svg {
         width: 100px;
         height: 100px;
         margin-bottom: 1rem;
         opacity: 0.5;
+    }
+
+    .control-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .btn-control {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+        font-size: 0.85rem;
+    }
+
+    .btn-control:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-control.ping {
+        background: #2196F3;
+        color: white;
+    }
+
+    .btn-control.status {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .btn-control.restart {
+        background: #FF9800;
+        color: white;
+    }
+
+    .btn-control.reboot {
+        background: #F44336;
+        color: white;
+    }
+
+    .btn-control.shutdown {
+        background: #9C27B0;
+        color: white;
+    }
+
+    .sensor-badge {
+        display: inline-block;
+        background: var(--primary);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .alert-badge {
+        background: #F44336;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.6;
+        }
+    }
+
+    .sensor-section {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .collapsible {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .collapsible:hover {
+        opacity: 0.8;
     }
 </style>
 {% endblock %}
@@ -151,8 +241,9 @@
         <div id="agents-container">
             <div class="empty-state">
                 <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
-                    <path d="M7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/>
+                    <path
+                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z" />
+                    <path d="M7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z" />
                 </svg>
                 <p>No agents connected yet</p>
                 <small>Install the BerryConnect agent on your satellite devices to get started</small>
@@ -170,7 +261,7 @@
             <li>The agent will auto-discover the broker and start sending telemetry</li>
             <li>Agents will appear here automatically once connected</li>
         </ol>
-        
+
         <h3 style="margin-top: 2rem;">Manual Configuration</h3>
         <p>If auto-discovery fails, create <code>config.json</code> manually:</p>
         <pre style="background: var(--surface); padding: 1rem; border-radius: 6px; overflow-x: auto;"><code>{
@@ -187,16 +278,17 @@
 {% block scripts %}
 <script>
     let brokerInfo = null;
-    
+    let agentsData = {};
+
     async function loadBrokerInfo() {
         try {
             const response = await fetch('/api/mqtt/broker/info');
             const data = await response.json();
             brokerInfo = data;
-            
+
             const ips = data.local_ips || [];
             const primaryIP = ips[0] || 'localhost';
-            
+
             document.getElementById('broker-info-content').innerHTML = `
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
                     <div>
@@ -221,31 +313,31 @@
                 </div>
                 ` : ''}
             `;
-            
-            // Update placeholder
+
             document.getElementById('broker-ip-placeholder').textContent = primaryIP;
         } catch (error) {
             console.error('Error loading broker info:', error);
             document.getElementById('broker-info-content').innerHTML = '<p style="color: #F44336;">Error loading broker info</p>';
         }
     }
-    
+
     async function loadAgents() {
         try {
             const response = await fetch('/api/mqtt/agents');
             const agents = await response.json();
-            
+            agentsData = agents;
+
             const container = document.getElementById('agents-container');
-            
+
             if (Object.keys(agents).length === 0) {
-                // Keep empty state
-                return;
+                return; // Keep empty state
             }
-            
+
             container.innerHTML = Object.entries(agents).map(([id, agent]) => {
                 const isOnline = agent.status === 'online';
                 const data = agent.telemetry || {};
-                
+                const sensors = data.sensors || {};
+
                 return `
                     <div class="agent-card ${isOnline ? 'agent-online' : 'agent-offline'}">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -258,8 +350,28 @@
                         
                         ${data.hostname ? `<p><strong>Hostname:</strong> ${data.hostname}</p>` : ''}
                         ${data.ip ? `<p><strong>IP:</strong> <code>${data.ip}</code></p>` : ''}
+                        ${data.uptime_seconds ? `<p><strong>Uptime:</strong> ${formatUptime(data.uptime_seconds)}</p>` : ''}
                         
-                        ${Object.keys(data).length > 0 ? `
+                        <!-- Control Buttons -->
+                        <div class="control-buttons">
+                            <button class="btn-control ping" onclick="sendCommand('${id}', 'ping')">
+                                🔔 Ping
+                            </button>
+                            <button class="btn-control status" onclick="sendCommand('${id}', 'get_status')">
+                                📊 Get Status
+                            </button>
+                            <button class="btn-control restart" onclick="sendCommand('${id}', 'restart_agent')">
+                                🔄 Restart Agent
+                            </button>
+                            <button class="btn-control reboot" onclick="confirmCommand('${id}', 'reboot')">
+                                🔁 Reboot
+                            </button>
+                            <button class="btn-control shutdown" onclick="confirmCommand('${id}', 'shutdown')">
+                                ⏻ Shutdown
+                            </button>
+                        </div>
+                        
+                        <!-- Telemetry Grid -->
                         <div class="telemetry-grid">
                             ${data.cpu_percent !== undefined ? `
                             <div class="telemetry-item">
@@ -273,33 +385,117 @@
                                 <div class="telemetry-label">RAM</div>
                             </div>
                             ` : ''}
-                            ${data.cpu_temp !== undefined ? `
+                            ${data.cpu_temp !== undefined && data.cpu_temp !== null ? `
                             <div class="telemetry-item">
                                 <div class="telemetry-value">${data.cpu_temp.toFixed(1)}°C</div>
                                 <div class="telemetry-label">Temperature</div>
                             </div>
                             ` : ''}
+                            ${data.disk_percent !== undefined ? `
+                            <div class="telemetry-item">
+                                <div class="telemetry-value">${data.disk_percent.toFixed(1)}%</div>
+                                <div class="telemetry-label">Disk</div>
+                            </div>
+                            ` : ''}
+                            ${data.battery_percent !== undefined ? `
+                            <div class="telemetry-item">
+                                <div class="telemetry-value">${data.battery_percent}%</div>
+                                <div class="telemetry-label">Battery ${data.battery_plugged ? '🔌' : '🔋'}</div>
+                            </div>
+                            ` : ''}
+                            ${data.net_bytes_sent !== undefined ? `
+                            <div class="telemetry-item">
+                                <div class="telemetry-value">${formatBytes(data.net_bytes_sent)}</div>
+                                <div class="telemetry-label">Net Sent</div>
+                            </div>
+                            ` : ''}
                         </div>
-                        ` : '<p><em>No telemetry data yet</em></p>'}
+                        
+                        <!-- Sensors Section -->
+                        ${Object.keys(sensors).length > 0 ? `
+                        <div class="sensor-section">
+                            <h4 class="collapsible" onclick="toggleSection('sensors-${id}')">
+                                🔬 Sensors (${Object.keys(sensors).length})
+                            </h4>
+                            <div id="sensors-${id}" style="margin-top: 0.5rem;">
+                                ${Object.entries(sensors).map(([name, value]) => `
+                                    <span class="sensor-badge">${name}: ${JSON.stringify(value)}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
                     </div>
                 `;
             }).join('');
-            
+
         } catch (error) {
             console.error('Error loading agents:', error);
         }
     }
-    
+
+    function formatUptime(seconds) {
+        const days = Math.floor(seconds / 86400);
+        const hours = Math.floor((seconds % 86400) / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+
+        if (days > 0) return `${days}d ${hours}h`;
+        if (hours > 0) return `${hours}h ${minutes}m`;
+        return `${minutes}m`;
+    }
+
+    function formatBytes(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+    }
+
+    function toggleSection(id) {
+        const elem = document.getElementById(id);
+        if (elem.style.display === 'none') {
+            elem.style.display = 'block';
+        } else {
+            elem.style.display = 'none';
+        }
+    }
+
+    async function sendCommand(agentId, command, params = {}) {
+        try {
+            const response = await fetch(`/api/mqtt/agent/${agentId}/command`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command, params })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                window.notify('Command Sent', `${command} sent to ${agentId}`, 'success');
+            } else {
+                window.notify('Error', data.message, 'danger');
+            }
+        } catch (error) {
+            console.error('Error sending command:', error);
+            window.notify('Error', 'Failed to send command', 'danger');
+        }
+    }
+
+    function confirmCommand(agentId, command) {
+        if (confirm(`Are you sure you want to ${command} ${agentId}?`)) {
+            sendCommand(agentId, command);
+        }
+    }
+
     async function removeAgent(agentId) {
         if (!confirm(`Remove agent "${agentId}"?`)) return;
-        
+
         try {
             const response = await fetch(`/api/mqtt/agent/${agentId}`, {
                 method: 'DELETE'
             });
-            
+
             const data = await response.json();
-            
+
             if (data.success) {
                 loadAgents();
             } else {
@@ -310,20 +506,17 @@
             alert('Error removing agent');
         }
     }
-    
+
     async function generateInstaller() {
         try {
             const response = await fetch('/api/mqtt/generate_installer', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
-            
+
             const data = await response.json();
-            
+
             if (data.success) {
-                // Create download
                 const blob = new Blob([data.installer], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -331,21 +524,21 @@
                 a.download = `berry_install_${data.broker_ip}.sh`;
                 a.click();
                 URL.revokeObjectURL(url);
-                
-                alert(`Installer generated!\\n\\nBroker: ${data.broker_ip}:${data.broker_port}\\n\\nCopy this script to your satellite device and run it.`);
+
+                window.notify('Success', `Installer generated for ${data.broker_ip}:${data.broker_port}`, 'success');
             } else {
-                alert('Error: ' + data.message);
+                window.notify('Error', data.message, 'danger');
             }
         } catch (error) {
             console.error('Error generating installer:', error);
-            alert('Error generating installer');
+            window.notify('Error', 'Failed to generate installer', 'danger');
         }
     }
-    
+
     // Load data on page load
     loadBrokerInfo();
     loadAgents();
-    
+
     // Auto-refresh every 10 seconds
     setInterval(loadAgents, 10000);
 </script>
