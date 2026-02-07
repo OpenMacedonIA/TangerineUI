@@ -502,9 +502,32 @@
 
         writeLog('System initialized.', '\x1b[38;5;250m');
 
-        // Connect Socket to NeoCore (where events are emitted)
+        // Connect Socket to NeoCore with improved reconnection
         const socketUrl = "{{ socket_url }}" || undefined;
-        const socket = io(socketUrl);
+        const socket = io(socketUrl, {
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            reconnectionAttempts: Infinity,
+            timeout: 20000,
+            transports: ['websocket', 'polling']
+        });
+
+        socket.on('connect', () => {
+            console.log('✅ Connected to NeoCore');
+        });
+
+        socket.on('disconnect', (reason) => {
+            console.warn('⚠️ Disconnected:', reason);
+            if (reason === 'io server disconnect') {
+                socket.connect();
+            }
+        });
+
+        socket.on('reconnect', (attemptNumber) => {
+            console.log('🔄 Reconnected after', attemptNumber, 'attempts');
+            writeLog('Reconnected to server', '\\x1b[32m');
+        });
 
         // --- EVENTS ---
 

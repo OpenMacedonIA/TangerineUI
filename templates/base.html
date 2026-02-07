@@ -585,18 +585,65 @@
     </script>
 
     <script>
-        // Global Socket.IO connection
+        // Global Socket.IO connection with improved reconnection
         const socketUrl = "{{ socket_url }}" || undefined;
-        const socket = io(socketUrl);
+        const socket = io(socketUrl, {
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            reconnectionAttempts: Infinity,
+            timeout: 20000,
+            transports: ['websocket', 'polling']
+        });
+
+        let connectionState = 'disconnected';
 
         socket.on('connect', () => {
-            console.log('Connected to WebSocket');
-            // Check if we were offline? Socket reconnection handles this partially, but HTTP polling is safer for full restart.
+            console.log('✅ Connected to WebSocket');
+            connectionState = 'connected';
+            // Remove any "disconnected" indicators
+            document.querySelectorAll('.connection-indicator').forEach(el => {
+                el.classList.remove('disconnected');
+                el.classList.add('connected');
+            });
         });
 
-        socket.on('disconnect', () => {
-            console.log('Disconnected from WebSocket');
+        socket.on('disconnect', (reason) => {
+            console.warn('⚠️ Disconnected from WebSocket:', reason);
+            connectionState = 'disconnected';
+            document.querySelectorAll('.connection-indicator').forEach(el => {
+                el.classList.remove('connected');
+                el.classList.add('disconnected');
+            });
+
+            // Auto-reconnect if server initiated disconnect
+            if (reason === 'io server disconnect') {
+                socket.connect();
+            }
         });
+
+        socket.on('connect_error', (error) => {
+            console.error('❌ Connection error:', error);
+        });
+
+        socket.on('reconnect', (attemptNumber) => {
+            console.log('🔄 Reconnected after', attemptNumber, 'attempts');
+            notify("Conexión", "Reconectado al servidor", "success");
+        });
+
+        socket.on('reconnect_attempt', () => {
+            console.log('🔄 Attempting to reconnect...');
+        });
+
+        socket.on('reconnect_error', (error) => {
+            console.error('❌ Reconnection error:', error);
+        });
+
+        socket.on('reconnect_failed', () => {
+            console.error('❌ Failed to reconnect');
+            notify("Error", "No se pudo reconectar al servidor", "error");
+        });
+
 
         // Feedback Listeners
         socket.on('stt:result', (data) => {
