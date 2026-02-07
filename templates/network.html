@@ -119,16 +119,34 @@
 
         fetch('/api/wifi/scan')
             .then(res => res.json())
-            .then(networks => {
+            .then(data => {
                 listDiv.innerHTML = '';
                 btn.disabled = false;
 
-                if (networks.length === 0) {
+                // Handle error response from backend
+                if (data.error) {
+                    listDiv.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-warning" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>No se pudo escanear WiFi</strong><br>
+                                <small>${data.error}</small><br>
+                                <small class="text-muted mt-2">
+                                    Asegúrate de que network-manager, wireless-tools o iw estén instalados.
+                                    Ejecuta: <code>sudo apt install network-manager wireless-tools iw</code>
+                                </small>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                if (data.length === 0) {
                     listDiv.innerHTML = '<div class="col-12 text-center text-muted py-4">No se encontraron redes.</div>';
                     return;
                 }
 
-                networks.forEach(net => {
+                data.forEach(net => {
                     const signalColor = net.signal > 70 ? 'success' : (net.signal > 40 ? 'warning' : 'danger');
                     const card = `
                         <div class="col-md-6 col-lg-4">
@@ -150,7 +168,15 @@
                 });
             })
             .catch(err => {
-                listDiv.innerHTML = `<div class="col-12 text-center text-danger py-4">Error: ${err}</div>`;
+                listDiv.innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-times-circle me-2"></i>
+                            <strong>Error de conexión</strong><br>
+                            <small>No se pudo comunicar con el servidor: ${err.message}</small>
+                        </div>
+                    </div>
+                `;
                 btn.disabled = false;
             });
     }
