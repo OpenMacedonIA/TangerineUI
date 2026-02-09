@@ -205,6 +205,11 @@
                                         <span class="text-mono text-muted">{{ ver }}</span>
                                     </li>
                                     {% endfor %}
+                                    <li class="d-flex justify-content-between border-top pt-2 mt-2"
+                                        style="max-width: 250px;">
+                                        <strong>Rama/Branch:</strong>
+                                        <span class="text-mono text-primary fw-bold">{{ sys_info.app.branch }}</span>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -412,9 +417,40 @@
 
         function checkForUpdates() {
             window.notify("Buscando Actualizaciones", "Conectando con repositorio central...", "info");
-            setTimeout(() => {
-                window.notify("Sistema Actualizado", "Genial, ya tienes la versión más reciente (v2.5.0 Stable).", "success");
-            }, 2000);
+
+            fetch('/api/update/check')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        window.notify("Error", "Fallo al buscar actualizaciones: " + data.error, "danger");
+                        return;
+                    }
+
+                    if (data.has_updates) {
+                        if (confirm(`¡Actualización Disponible!\n\nRama: ${data.branch}\nLocal: ${data.local_hash}\nRemoto: ${data.remote_hash}\n\n¿Quieres actualizar ahora?`)) {
+                            performUpdate();
+                        }
+                    } else {
+                        window.notify("Sistema Actualizado", `Estás en la última versión de la rama '${data.branch}'.`, "success");
+                    }
+                })
+                .catch(err => {
+                    window.notify("Error de Red", "No se pudo conectar con el servidor.", "danger");
+                });
+        }
+
+        function performUpdate() {
+            window.notify("Actualizando", "Descargando cambios y reiniciando...", "warning");
+            fetch('/api/update', { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        window.notify("Éxito", "Actualización completada. Reiniciando interface...", "success");
+                        setTimeout(() => location.reload(), 5000);
+                    } else {
+                        window.notify("Error", data.message, "danger");
+                    }
+                });
         }
     </script>
     {% endblock %}
