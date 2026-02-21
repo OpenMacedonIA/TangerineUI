@@ -708,7 +708,7 @@
         // Auto-close on voice commands - Intercept STT results
         const originalSTTHandler = (data) => {
             const output = data.text;
-            term.writeln(`\\x1b[32m👤 USER: ${output}\\x1b[0m`);
+            term.writeln(`USER: ${output}`);
 
             // Check for close keywords if in PIP mode
             if (pipModeActive) {
