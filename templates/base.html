@@ -17,7 +17,8 @@
         rel="stylesheet">
 
     <style>
-        :root {
+        :root,
+        [data-bs-theme="dark"] {
             /* DEEP SLATE THEME (Matches Face UI) */
             --bg-body: #0b0f19;
             --bg-sidebar: #0f121a;
@@ -32,6 +33,7 @@
             /* Indigo 400 */
             --danger: #ef4444;
             --success: #4ade80;
+            --warning: #fbbf24;
 
             --text-main: #f1f5f9;
             --text-muted: #94a3b8;
@@ -41,6 +43,22 @@
             --shadow-card: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 
             --sidebar-width: 280px;
+
+            /* BOOTSTRAP OVERRIDES */
+            --bs-body-bg: var(--bg-body);
+            --bs-body-color: var(--text-main);
+            --bs-primary: #38bdf8;
+            --bs-primary-rgb: 56, 189, 248;
+            --bs-info: #818cf8;
+            --bs-info-rgb: 129, 140, 248;
+            --bs-success: #4ade80;
+            --bs-success-rgb: 74, 222, 128;
+            --bs-warning: #fbbf24;
+            --bs-warning-rgb: 251, 191, 36;
+            --bs-danger: #ef4444;
+            --bs-danger-rgb: 239, 68, 68;
+            --bs-dark: #111827;
+            --bs-dark-rgb: 17, 24, 39;
         }
 
         [data-theme="light"] {
